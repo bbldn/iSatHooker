@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"isatHooker/category"
+	"isatHooker/order"
 	"isatHooker/response"
 	"net/http"
 )
@@ -31,10 +32,25 @@ func categoryUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	go category.SynchronizeCategory(r, path)
 }
 
+func catalogUpdateHandler(w http.ResponseWriter, r *http.Request) {
+	if false == start(w, r) {
+		return
+	}
+
+	dpt := r.Form.Get("dpt")
+
+	if "catalog" == dpt {
+		go category.SynchronizeCategoryProducts(r, path)
+	} else if "gamepost" == dpt {
+		go order.SynchronizeOrder(r, path)
+	}
+}
+
 func main() {
 	path = "/home/user/PhpstormProjects/iSatSynchronizer/bin/console"
 
 	http.HandleFunc("/back/category/update", categoryUpdateHandler)
+	http.HandleFunc("/back/admin/update", catalogUpdateHandler)
 
 	addr := fmt.Sprintf("%s:%s", "0.0.0.0", "8082")
 	_ = http.ListenAndServe(addr, nil)

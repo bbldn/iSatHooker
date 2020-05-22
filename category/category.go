@@ -1,24 +1,18 @@
 package category
 
 import (
-	"fmt"
 	"net/http"
-	"os/exec"
 )
 
 func SynchronizeCategory(r *http.Request, path string) {
 	if len(r.Form) > 1 {
-		commands := []string{path, "category:synchronize:by-ids", r.Form.Get("must_delete")}
-		cmd := exec.Command("php", commands...)
-		_ = cmd.Start()
+		// category:synchronize:by-ids r.Form.Get("must_delete")
 	}
 }
 
 func SynchronizeCategoryProducts(r *http.Request, path string) {
-	if r.Form.Get("products_update") == "Сохранить" {
-		fmt.Println(r.Form.Get("categoryID"))
-		//commands := []string{path, "category:synchronize:by-ids", r.Form.Get("must_delete")}
-		//cmd := exec.Command("php", commands...)
-		//_ = cmd.Start()
+	if "Сохранить" == r.Form.Get("products_update") {
+		//product:price:update:by-category-id r.Form.Get("categoryID")
+		//product:synchronize:by-ids r.Form.Get("categoryID")
 	}
 }
