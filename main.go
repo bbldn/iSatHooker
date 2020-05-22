@@ -3,12 +3,13 @@ package main
 import (
 	"fmt"
 	"isatHooker/category"
+	"isatHooker/config"
 	"isatHooker/order"
 	"isatHooker/response"
 	"net/http"
 )
 
-var path string
+var appConfig config.Config
 
 func start(w http.ResponseWriter, r *http.Request) bool {
 	w.Header().Set("Content-Type", "application/json")
@@ -29,7 +30,7 @@ func categoryUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go category.SynchronizeCategory(r, path)
+	go category.SynchronizeCategory(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
 }
 
 func catalogUpdateHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,19 +40,28 @@ func catalogUpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 	dpt := r.Form.Get("dpt")
 
-	if "catalog" == dpt {
-		go category.SynchronizeCategoryProducts(r, path)
-	} else if "gamepost" == dpt {
-		go order.SynchronizeOrder(r, path)
+	switch dpt {
+	case "catalog":
+		go category.SynchronizeCategoryProducts(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
+	case "gamepost":
+		go order.SynchronizeOrder(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
 	}
 }
 
 func main() {
-	path = "/home/user/PhpstormProjects/iSatSynchronizer/bin/console"
+	err := appConfig.Load(make(map[string]string))
+	if nil != err {
+		fmt.Println(err)
+
+		return
+	}
 
 	http.HandleFunc("/back/category/update", categoryUpdateHandler)
 	http.HandleFunc("/back/admin/update", catalogUpdateHandler)
 
-	addr := fmt.Sprintf("%s:%s", "0.0.0.0", "8082")
-	_ = http.ListenAndServe(addr, nil)
+	addr := fmt.Sprintf("%s:%s", appConfig.Values["ADDRESS"], appConfig.Values["PORT"])
+	err = http.ListenAndServe(addr, nil)
+	if nil != err {
+		fmt.Println(err)
+	}
 }
