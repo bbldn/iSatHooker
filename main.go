@@ -5,6 +5,7 @@ import (
 	"isatHooker/category"
 	"isatHooker/config"
 	"isatHooker/order"
+	"isatHooker/product"
 	"isatHooker/response"
 	"net/http"
 )
@@ -48,6 +49,14 @@ func catalogUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func productUpdateHandler(w http.ResponseWriter, r *http.Request) {
+	if false == start(w, r) {
+		return
+	}
+
+	go product.SynchronizeProduct(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
+}
+
 func main() {
 	err := appConfig.Load(make(map[string]string))
 	if nil != err {
@@ -56,6 +65,7 @@ func main() {
 		return
 	}
 
+	http.HandleFunc("/back/product/update", productUpdateHandler)
 	http.HandleFunc("/back/category/update", categoryUpdateHandler)
 	http.HandleFunc("/back/admin/update", catalogUpdateHandler)
 

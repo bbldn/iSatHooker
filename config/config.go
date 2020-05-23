@@ -49,9 +49,9 @@ func (c *Config) load(config map[string]string) error {
 }
 
 func (c *Config) validate() error {
-	_, exists := c.Values["APP_PATH"]
+	_, exists := c.Values["DEFERRED_OPERATIONS_ADDRESS"]
 	if true != exists {
-		return errors.New("`APP_PATH` not found in config")
+		return errors.New("`DEFERRED_OPERATIONS_ADDRESS` not found in config")
 	}
 
 	_, exists = c.Values["PORT"]

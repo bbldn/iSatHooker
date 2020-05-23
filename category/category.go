@@ -9,7 +9,7 @@ import (
 func SynchronizeCategory(r *http.Request, addr string) {
 	if len(r.Form) > 1 {
 		formData := url.Values{
-			"command ": {"category:synchronize:by-ids " + r.Form.Get("must_delete")},
+			"command": {"category:synchronize:by-ids " + r.Form.Get("must_delete")},
 		}
 
 		_, err := http.PostForm(addr, formData)
@@ -22,7 +22,7 @@ func SynchronizeCategory(r *http.Request, addr string) {
 func SynchronizeCategoryProducts(r *http.Request, addr string) {
 	if "Сохранить" == r.Form.Get("products_update") {
 		formData := url.Values{
-			"command ": {"product:price:update:by-category-id " + r.Form.Get("categoryID")},
+			"command": {"product:price:update:by-category-id " + r.Form.Get("categoryID")},
 		}
 
 		_, err := http.PostForm(addr, formData)
@@ -31,7 +31,7 @@ func SynchronizeCategoryProducts(r *http.Request, addr string) {
 		}
 
 		formData = url.Values{
-			"command ": {"product:synchronize:by-ids " + r.Form.Get("categoryID")},
+			"command": {"product:synchronize:by-ids " + r.Form.Get("categoryID")},
 		}
 
 		_, err = http.PostForm(addr, formData)
