@@ -9,7 +9,7 @@ import (
 func SynchronizeProduct(r *http.Request, addr string) {
 	if len(r.Form) > 1 {
 		formData := url.Values{
-			"command": {"product:synchronize:by-ids " + r.Form.Get("must_delete")},
+			"command": {"product:synchronize:by-ids " + r.Form.Get("productID")},
 		}
 
 		_, err := http.PostForm(addr, formData)
