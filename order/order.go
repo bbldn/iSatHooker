@@ -9,7 +9,7 @@ import (
 func SynchronizeOrder(r *http.Request, addr string) {
 	if "Сохранить" == r.Form.Get("save") {
 		formData := url.Values{
-			"command": {"order:synchronize:by-ids " + r.Form.Get("id")},
+			"command": {"order:synchronize:by-ids backToFront " + r.Form.Get("id")},
 		}
 
 		_, err := http.PostForm(addr, formData)
