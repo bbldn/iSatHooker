@@ -8,10 +8,11 @@ import (
 
 func Synchronize(r *http.Request, addr string) {
 	switch r.Form.Get("sub") {
-	case "orders":
-		synchronizeOrder(r, addr)
 	case "main":
 		synchronizeMain(r, addr)
+	case "orders":
+	default:
+		synchronizeOrder(r, addr)
 	}
 }
 
