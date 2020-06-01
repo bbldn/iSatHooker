@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"isatHooker/category"
 	"isatHooker/config"
-	"isatHooker/order"
+	"isatHooker/gamepost"
 	"isatHooker/product"
 	"isatHooker/response"
 	"net/http"
@@ -45,7 +45,7 @@ func catalogUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	case "catalog":
 		go category.SynchronizeCategoryProducts(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
 	case "gamepost":
-		go order.SynchronizeOrder(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
+		go gamepost.Synchronize(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
 	}
 }
 
