@@ -32,7 +32,7 @@ func synchronizeOrder(r *http.Request, addr string) {
 func synchronizeMain(r *http.Request, addr string) {
 	if "currencies" == r.Form.Get("setting") && "Сохранить" == r.Form.Get("currency_save") {
 		formData := url.Values{
-			"command": {"currency:synchronize:all"},
+			"command": {"currency:synchronize:all", "product:price:update:all"},
 		}
 
 		_, err := http.PostForm(addr, formData)

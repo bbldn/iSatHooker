@@ -22,7 +22,10 @@ func SynchronizeCategory(r *http.Request, addr string) {
 func SynchronizeCategoryProducts(r *http.Request, addr string) {
 	if "Сохранить" == r.Form.Get("products_update") {
 		formData := url.Values{
-			"command": {"product:price:update:by-category-id " + r.Form.Get("categoryID")},
+			"command": {
+				"product:price:update:by-category-id " + r.Form.Get("categoryID"),
+				"product:synchronize:by-ids " + r.Form.Get("categoryID"),
+			},
 		}
 
 		_, err := http.PostForm(addr, formData)
