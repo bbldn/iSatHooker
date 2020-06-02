@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"isatHooker/category"
 	"isatHooker/config"
-	"isatHooker/gamepost"
-	"isatHooker/product"
 	"isatHooker/response"
 	"net/http"
 )
 
-var appConfig config.Config
+type Context struct {
+	Config config.Config
+}
+
+var context Context
 
 func start(w http.ResponseWriter, r *http.Request) bool {
 	w.Header().Set("Content-Type", "application/json")
@@ -31,7 +32,7 @@ func categoryUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go category.SynchronizeCategory(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
+	go context.SynchronizeCategory(r)
 }
 
 func catalogUpdateHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,9 +44,9 @@ func catalogUpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch dpt {
 	case "catalog":
-		go category.SynchronizeCategoryProducts(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
+		go context.SynchronizeCategoryProducts(r)
 	case "gamepost":
-		go gamepost.Synchronize(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
+		go context.SynchronizeGamePost(r)
 	}
 }
 
@@ -54,11 +55,12 @@ func productUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go product.SynchronizeProduct(r, appConfig.Values["DEFERRED_OPERATIONS_ADDRESS"])
+	go context.SynchronizeProduct(r, context.Config.Values["DEFERRED_OPERATIONS_ADDRESS"])
 }
 
 func main() {
-	err := appConfig.Load(make(map[string]string))
+	context = Context{Config: config.Config{}}
+	err := context.Config.Load(make(map[string]string))
 	if nil != err {
 		fmt.Println(err)
 
@@ -69,7 +71,7 @@ func main() {
 	http.HandleFunc("/back/category/update", categoryUpdateHandler)
 	http.HandleFunc("/back/admin/update", catalogUpdateHandler)
 
-	addr := fmt.Sprintf("%s:%s", appConfig.Values["ADDRESS"], appConfig.Values["PORT"])
+	addr := fmt.Sprintf("%s:%s", context.Config.Values["ADDRESS"], context.Config.Values["PORT"])
 	err = http.ListenAndServe(addr, nil)
 	if nil != err {
 		fmt.Println(err)

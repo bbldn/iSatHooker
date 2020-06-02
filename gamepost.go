@@ -1,4 +1,4 @@
-package gamepost
+package main
 
 import (
 	"fmt"
@@ -6,38 +6,42 @@ import (
 	"net/url"
 )
 
-func Synchronize(r *http.Request, addr string) {
+func (c Context) SynchronizeGamePost(r *http.Request) {
 	switch r.Form.Get("sub") {
 	case "main":
-		synchronizeMain(r, addr)
+		c.synchronizeMain(r)
 	case "orders":
 	default:
-		synchronizeOrder(r, addr)
+		c.synchronizeOrder(r)
 	}
 }
 
-func synchronizeOrder(r *http.Request, addr string) {
+func (c Context) synchronizeOrder(r *http.Request) {
 	if "Сохранить" == r.Form.Get("save") {
 		formData := url.Values{
 			"command": {"order:synchronize:by-ids backToFront " + r.Form.Get("id")},
 		}
 
-		_, err := http.PostForm(addr, formData)
+		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
 		if err != nil {
 			fmt.Println(err)
 		}
+
+		c.sendHook(r.Form, "HOOK_ORDER")
 	}
 }
 
-func synchronizeMain(r *http.Request, addr string) {
+func (c Context) synchronizeMain(r *http.Request) {
 	if "currencies" == r.Form.Get("setting") && "Сохранить" == r.Form.Get("currency_save") {
 		formData := url.Values{
 			"command": {"currency:synchronize:all", "product:price:update:all"},
 		}
 
-		_, err := http.PostForm(addr, formData)
+		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
 		if err != nil {
 			fmt.Println(err)
 		}
+
+		c.sendHook(r.Form, "HOOK_CURRENCY")
 	}
 }

@@ -1,4 +1,4 @@
-package category
+package main
 
 import (
 	"fmt"
@@ -6,20 +6,22 @@ import (
 	"net/url"
 )
 
-func SynchronizeCategory(r *http.Request, addr string) {
+func (c Context) SynchronizeCategory(r *http.Request) {
 	if len(r.Form) > 1 {
 		formData := url.Values{
 			"command": {"category:synchronize:by-ids " + r.Form.Get("must_delete")},
 		}
 
-		_, err := http.PostForm(addr, formData)
+		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
 		if err != nil {
 			fmt.Println(err)
 		}
+
+		c.sendHook(r.Form, "HOOK_CATEGORY")
 	}
 }
 
-func SynchronizeCategoryProducts(r *http.Request, addr string) {
+func (c Context) SynchronizeCategoryProducts(r *http.Request) {
 	if "Сохранить" == r.Form.Get("products_update") {
 		formData := url.Values{
 			"command": {
@@ -28,18 +30,11 @@ func SynchronizeCategoryProducts(r *http.Request, addr string) {
 			},
 		}
 
-		_, err := http.PostForm(addr, formData)
+		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		formData = url.Values{
-			"command": {"product:synchronize:by-ids " + r.Form.Get("categoryID")},
-		}
-
-		_, err = http.PostForm(addr, formData)
-		if err != nil {
-			fmt.Println(err)
-		}
+		c.sendHook(r.Form, "HOOK_CATEGORY_PRODUCT")
 	}
 }
