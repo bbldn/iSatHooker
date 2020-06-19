@@ -11,11 +11,11 @@ func (c Context) SynchronizeCategory(r *http.Request) {
 		var formData map[string][]string
 		if len(r.Form.Get("must_delete")) > 0 {
 			formData = url.Values{
-				"command": {"category:synchronize:by-ids " + r.Form.Get("must_delete")},
+				"command": {"category:synchronize:by-ids " + r.Form.Get("must_delete") + " 1"},
 			}
 		} else if len(r.Form.Get("name")) > 0 {
 			formData = url.Values{
-				"command": {"category:synchronize:by-name " + r.Form.Get("name")},
+				"command": {"category:synchronize:by-name " + r.Form.Get("name") + " 1"},
 			}
 		} else {
 			return
