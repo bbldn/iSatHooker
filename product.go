@@ -8,8 +8,18 @@ import (
 
 func (c Context) SynchronizeProduct(r *http.Request, addr string) {
 	if len(r.Form) > 1 {
-		formData := url.Values{
-			"command": {"product:synchronize:by-ids " + r.Form.Get("productID")},
+		var formData map[string][]string
+
+		if len(r.Form.Get("productID")) > 0 && "0" != r.Form.Get("productID") {
+			formData = url.Values{
+				"command": {"product:synchronize:by-ids " + r.Form.Get("productID")},
+			}
+		} else if len(r.Form.Get("name")) > 0 {
+			formData = url.Values{
+				"command": {"product:synchronize:by-name " + r.Form.Get("name")},
+			}
+		} else {
+			return
 		}
 
 		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)

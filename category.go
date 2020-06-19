@@ -8,8 +8,17 @@ import (
 
 func (c Context) SynchronizeCategory(r *http.Request) {
 	if len(r.Form) > 1 {
-		formData := url.Values{
-			"command": {"category:synchronize:by-ids " + r.Form.Get("must_delete")},
+		var formData map[string][]string
+		if len(r.Form.Get("must_delete")) > 0 {
+			formData = url.Values{
+				"command": {"category:synchronize:by-ids " + r.Form.Get("must_delete")},
+			}
+		} else if len(r.Form.Get("name")) > 0 {
+			formData = url.Values{
+				"command": {"category:synchronize:by-name " + r.Form.Get("name")},
+			}
+		} else {
+			return
 		}
 
 		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
