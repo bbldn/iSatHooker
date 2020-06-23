@@ -11,11 +11,11 @@ func (c Context) SynchronizeCategory(r *http.Request) {
 		var formData map[string][]string
 		if len(r.Form.Get("must_delete")) > 0 {
 			formData = url.Values{
-				"command": {"category:synchronize:by-ids " + r.Form.Get("must_delete") + " 1"},
+				"command": {fmt.Sprintf("category:synchronize:by-ids %s 1", r.Form.Get("must_delete"))},
 			}
 		} else if len(r.Form.Get("name")) > 0 {
 			formData = url.Values{
-				"command": {"category:synchronize:by-name " + r.Form.Get("name") + " 1"},
+				"command": {fmt.Sprintf("category:synchronize:by-name %s 1", r.Form.Get("name"))},
 			}
 		} else {
 			return
@@ -34,8 +34,8 @@ func (c Context) SynchronizeCategoryProducts(r *http.Request) {
 	if "Сохранить" == r.Form.Get("products_update") {
 		formData := url.Values{
 			"command": {
-				"product:price:update:by-category-id " + r.Form.Get("categoryID"),
-				"product:synchronize:by-ids " + r.Form.Get("categoryID"),
+				fmt.Sprintf("product:price:update:by-category-id %s", r.Form.Get("categoryID")),
+				fmt.Sprintf("product:synchronize:by-ids %s 1", r.Form.Get("categoryID")),
 			},
 		}
 
