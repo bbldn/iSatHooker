@@ -34,16 +34,18 @@ func (c Context) synchronizeOrder(r *http.Request) {
 }
 
 func (c Context) synchronizePrice(r *http.Request) {
-	formData := url.Values{
-		"command": {"product:price:update:all"},
-	}
+	if "Сохранить" == r.Form.Get("prices_save") {
+		formData := url.Values{
+			"command": {"product:price:update:all"},
+		}
 
-	_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
-	if err != nil {
-		fmt.Println(err)
-	}
+		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
+		if err != nil {
+			fmt.Println(err)
+		}
 
-	c.sendHook(r.Form, "HOOK_ORDER")
+		c.sendHook(r.Form, "HOOK_PRICE_ALL")
+	}
 }
 
 func (c Context) synchronizeMain(r *http.Request) {
