@@ -36,7 +36,10 @@ func (c Context) synchronizeOrder(r *http.Request) {
 func (c Context) synchronizePrice(r *http.Request) {
 	if "Сохранить" == r.Form.Get("prices_save") {
 		formData := url.Values{
-			"command": {"product:price:update:all"},
+			"command": {
+				"currency:synchronize:all",
+				"product:price:update:all",
+			},
 		}
 
 		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)

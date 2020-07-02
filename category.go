@@ -34,6 +34,7 @@ func (c Context) SynchronizeCategoryProducts(r *http.Request) {
 	if "Сохранить" == r.Form.Get("products_update") {
 		formData := url.Values{
 			"command": {
+				"currency:synchronize:all",
 				fmt.Sprintf("product:price:update:by-category-id %s", r.Form.Get("categoryID")),
 				fmt.Sprintf("product:synchronize:by-ids %s 1", r.Form.Get("categoryID")),
 			},
