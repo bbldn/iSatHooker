@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 func (c Context) SynchronizeGamePost(r *http.Request) {
@@ -20,8 +21,14 @@ func (c Context) SynchronizeGamePost(r *http.Request) {
 
 func (c Context) synchronizeOrder(r *http.Request) {
 	if "Сохранить" == r.Form.Get("save") {
+		id := strings.TrimSpace(r.Form.Get("id"))
+
+		if len(id) == 0 {
+			return
+		}
+
 		formData := url.Values{
-			"command": {fmt.Sprintf("order:synchronize:by-ids backToFront %s", r.Form.Get("id"))},
+			"command": {fmt.Sprintf("order:synchronize:by-ids backToFront %s", id)},
 		}
 
 		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
@@ -38,7 +45,7 @@ func (c Context) synchronizePrice(r *http.Request) {
 		formData := url.Values{
 			"command": {
 				"currency:synchronize:all",
-				"product:price:update:all",
+				"product:price:synchronize:all:fast",
 			},
 		}
 
@@ -56,7 +63,7 @@ func (c Context) synchronizeMain(r *http.Request) {
 		formData := url.Values{
 			"command": {
 				"currency:synchronize:all",
-				"product:price:update:all",
+				"product:price:synchronize:all:fast",
 			},
 		}
 

@@ -16,7 +16,7 @@ func (c Context) SynchronizeProduct(r *http.Request, addr string) {
 			}
 		} else if len(r.Form.Get("name")) > 0 {
 			formData = url.Values{
-				"command": {fmt.Sprintf("product:synchronize:by-name %s 1", r.Form.Get("name"))},
+				"command": {fmt.Sprintf("product:synchronize:by-name '%s' 1", r.Form.Get("name"))},
 			}
 		} else {
 			return
