@@ -20,9 +20,9 @@ func (c Context) SynchronizeProduct(r *http.Request, addr string) {
 				return
 			}
 
-			command = "product:synchronize:by-ids %s 1"
-		} else {
 			command = "product:synchronize:by-name '%s' 1"
+		} else {
+			command = "product:synchronize:by-ids %s 1"
 		}
 
 		formData = url.Values{
