@@ -4,21 +4,27 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 func (c Context) SynchronizeCategory(r *http.Request) {
 	if len(r.Form) > 1 {
 		var formData map[string][]string
-		if len(r.Form.Get("must_delete")) > 0 {
-			formData = url.Values{
-				"command": {fmt.Sprintf("category:synchronize:by-ids %s 1", r.Form.Get("must_delete"))},
+		var command string
+
+		value := strings.TrimSpace(r.Form.Get("must_delete"))
+		if 0 == len(value) {
+			value = strings.TrimSpace(r.Form.Get("name"))
+			if 0 == len(value) {
+				return
 			}
-		} else if len(r.Form.Get("name")) > 0 {
-			formData = url.Values{
-				"command": {fmt.Sprintf("category:synchronize:by-name %s 1", r.Form.Get("name"))},
-			}
+			command = "category:synchronize:by-name %s 1"
 		} else {
-			return
+			command = "category:synchronize:by-ids %s 1"
+		}
+
+		formData = url.Values{
+			"command": {fmt.Sprintf(command, value)},
 		}
 
 		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
@@ -32,11 +38,17 @@ func (c Context) SynchronizeCategory(r *http.Request) {
 
 func (c Context) SynchronizeCategoryProducts(r *http.Request) {
 	if "Сохранить" == r.Form.Get("products_update") {
+		id := strings.TrimSpace(r.Form.Get("categoryID"))
+
+		if 0 == len(id) {
+			return
+		}
+
 		formData := url.Values{
 			"command": {
 				"currency:synchronize:all",
-				fmt.Sprintf("product:price:update:by-category-id %s", r.Form.Get("categoryID")),
-				fmt.Sprintf("product:synchronize:by-ids %s 1", r.Form.Get("categoryID")),
+				fmt.Sprintf("product:price:synchronize:by-category-id %s", id),
+				fmt.Sprintf("product:synchronize:by-category-id %s 1", id),
 			},
 		}
 
