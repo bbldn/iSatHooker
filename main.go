@@ -50,6 +50,14 @@ func catalogUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func cronUpdateHandler(w http.ResponseWriter, r *http.Request) {
+	if false == start(w, r) {
+		return
+	}
+
+	go context.SynchronizePrices(r, context.Config.Values["DEFERRED_OPERATIONS_ADDRESS"])
+}
+
 func productUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	if false == start(w, r) {
 		return
@@ -70,6 +78,7 @@ func main() {
 	http.HandleFunc("/back/product/update", productUpdateHandler)
 	http.HandleFunc("/back/category/update", categoryUpdateHandler)
 	http.HandleFunc("/back/admin/update", catalogUpdateHandler)
+	http.HandleFunc("/back/cron/update", cronUpdateHandler)
 
 	addr := fmt.Sprintf("%s:%s", context.Config.Values["ADDRESS"], context.Config.Values["PORT"])
 	err = http.ListenAndServe(addr, nil)
