@@ -14,7 +14,6 @@ func (c Context) SynchronizeGamePost(r *http.Request) {
 	case "price":
 		c.synchronizePrice(r)
 	case "orders":
-	default:
 		c.synchronizeOrder(r)
 	}
 }
@@ -22,7 +21,6 @@ func (c Context) SynchronizeGamePost(r *http.Request) {
 func (c Context) synchronizeOrder(r *http.Request) {
 	if "Сохранить" == r.Form.Get("save") {
 		id := strings.TrimSpace(r.Form.Get("id"))
-
 		if 0 == len(id) {
 			return
 		}

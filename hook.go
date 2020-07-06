@@ -7,7 +7,11 @@ import (
 )
 
 func (c Context) sendHook(values map[string][]string, hook string) {
-	addresses := c.Config.Values[hook]
+	addresses, exists := c.Config.Values[hook]
+	if false == exists {
+		return
+	}
+
 	parsedAddresses := strings.Split(addresses, ",")
 	for _, address := range parsedAddresses {
 		_, err := http.PostForm(address, values)
