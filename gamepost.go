@@ -15,6 +15,8 @@ func (c Context) SynchronizeGamePost(r *http.Request) {
 		c.synchronizePrice(r)
 	case "orders":
 		c.synchronizeOrder(r)
+	case "club":
+		c.synchronizeClub(r)
 	}
 }
 
@@ -71,5 +73,25 @@ func (c Context) synchronizeMain(r *http.Request) {
 		}
 
 		c.sendHook(r.Form, "HOOK_CURRENCY")
+	}
+}
+
+func (c Context) synchronizeClub(r *http.Request) {
+	if "Обновить" == r.Form.Get("save") {
+		id := strings.TrimSpace(r.Form.Get("id"))
+		if 0 == len(id) {
+			return
+		}
+
+		formData := url.Values{
+			"command": {fmt.Sprintf("customer:synchronize:by-ids %s", id)},
+		}
+
+		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		c.sendHook(r.Form, "HOOK_CLUB")
 	}
 }
