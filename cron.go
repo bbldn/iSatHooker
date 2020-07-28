@@ -10,7 +10,7 @@ func (c Context) SynchronizePrices(r *http.Request, addr string) {
 	formData := url.Values{
 		"command": {
 			"currency:synchronize:all",
-			"product:price:synchronize:all:fast",
+			"product:price:synchronize:all",
 		},
 	}
 

@@ -9,11 +9,9 @@ import (
 
 func (c Context) SynchronizeProduct(r *http.Request, addr string) {
 	if len(r.Form) > 1 {
-		var formData map[string][]string
 		var command string
 
 		value := strings.TrimSpace(r.Form.Get("productID"))
-
 		if 0 == len(value) || "0" == value {
 			value = strings.TrimSpace(r.Form.Get("name"))
 			if len(value) == 0 {
@@ -25,7 +23,9 @@ func (c Context) SynchronizeProduct(r *http.Request, addr string) {
 			command = "product:synchronize:by-ids %s 1"
 		}
 
-		formData = url.Values{
+		fmt.Println(fmt.Sprintf(command, value))
+
+		formData := url.Values{
 			"command": {fmt.Sprintf(command, value)},
 		}
 
