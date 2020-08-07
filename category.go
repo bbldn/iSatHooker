@@ -18,13 +18,14 @@ func (c Context) SynchronizeCategory(r *http.Request) {
 			if 0 == len(value) {
 				return
 			}
-			command = "category:synchronize:by-name %s 1"
+
+			command = "category:synchronize:by-name '" + value + "' 1"
 		} else {
-			command = "category:synchronize:by-ids %s 1"
+			command = fmt.Sprintf("category:synchronize:by-ids %s 1", value)
 		}
 
 		formData = url.Values{
-			"command": {fmt.Sprintf(command, value)},
+			"command": {command},
 		}
 
 		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
