@@ -18,15 +18,13 @@ func (c Context) SynchronizeProduct(r *http.Request, addr string) {
 				return
 			}
 
-			command = "product:synchronize:by-name '%s' 1"
+			command = "product:synchronize:by-name '" + value + "' 1"
 		} else {
-			command = "product:synchronize:by-ids %s 1"
+			command = fmt.Sprintf("product:synchronize:by-ids %s 1", value)
 		}
 
-		fmt.Println(fmt.Sprintf(command, value))
-
 		formData := url.Values{
-			"command": {fmt.Sprintf(command, value)},
+			"command": {command},
 		}
 
 		_, err := http.PostForm(c.Config.Values["DEFERRED_OPERATIONS_ADDRESS"], formData)
