@@ -13,11 +13,6 @@ func (c Context) SynchronizeProduct(r *http.Request, addr string) {
 
 		value := strings.TrimSpace(r.Form.Get("productID"))
 		if 0 == len(value) || "0" == value {
-			value = strings.TrimSpace(r.Form.Get("name"))
-			if len(value) == 0 {
-				return
-			}
-
 			command = "product:synchronize:last 1"
 		} else {
 			command = fmt.Sprintf("product:synchronize:by-ids %s 1", value)
