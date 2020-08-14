@@ -14,12 +14,7 @@ func (c Context) SynchronizeCategory(r *http.Request) {
 
 		value := strings.TrimSpace(r.Form.Get("must_delete"))
 		if 0 == len(value) {
-			value = strings.TrimSpace(r.Form.Get("name"))
-			if 0 == len(value) {
-				return
-			}
-
-			command = "category:synchronize:by-name '" + value + "' 1"
+			command = "category:synchronize:last 1"
 		} else {
 			command = fmt.Sprintf("category:synchronize:by-ids %s 1", value)
 		}
