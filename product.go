@@ -18,7 +18,7 @@ func (c Context) SynchronizeProduct(r *http.Request, addr string) {
 				return
 			}
 
-			command = "product:synchronize:by-name '" + value + "' 1"
+			command = "product:synchronize:last 1"
 		} else {
 			command = fmt.Sprintf("product:synchronize:by-ids %s 1", value)
 		}
