@@ -43,7 +43,7 @@ func (c Context) SynchronizeCategoryProducts(r *http.Request) {
 		formData := url.Values{
 			"command": {
 				"currency:synchronize:all",
-				fmt.Sprintf("product:synchronize:by-category-id %s", id),
+				fmt.Sprintf("product:synchronize:by-category-id:lite %s", id),
 			},
 		}
 
